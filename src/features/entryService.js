@@ -1,5 +1,6 @@
 import axios from 'axios';
-const API_URL = `${process.env.BASE_URL}/api/v1/entrys/`;
+
+const API_URL = `${process.env.REACT_APP_BASE_URL}/api/v1/entrys/`;
 
 // Get Entries
 const getEntries = async (token) => {
@@ -9,18 +10,19 @@ const getEntries = async (token) => {
     },
   };
   const { data } = await axios.get(API_URL, config);
+
   return data;
 };
 
 //Create entry
 
-const createEntry = async (entryData, token) => {
+const createEntry = async (token) => {
   let config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  const { data } = await axios.post(API_URL, entryData, config);
+  const { data } = await axios.post(API_URL, {}, config);
   return data;
 };
 
@@ -38,13 +40,13 @@ const getEntry = async (id, token) => {
 };
 
 // update Entry
-const updateEntry = async (id, updateData, token) => {
+const updateEntry = async (id, token) => {
   let config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  const { data } = await axios.put(API_URL + id, updateData, config);
+  const { data } = await axios.put(API_URL + id, config);
   return data;
 };
 

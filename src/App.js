@@ -7,6 +7,7 @@ import Auth from './pages/Auth';
 import Layout from './pages/Layout';
 import Entries from './pages/Entries';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Entry from './components/Entry';
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/entries" element={<Entries />} />
         <Route path="/entry/:id" element={<Entry />} />
       </Routes>
+      <ToastContainer />
     </Layout>
   );
 }

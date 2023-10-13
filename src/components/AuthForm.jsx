@@ -1,24 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { register, login, reset } from '../features/authSlice';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
 const AuthForm = ({ switchMode, isLogin }) => {
-  const [user, setUser] = useState(true);
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
-  const {} = useSelector((store) => store.auth);
+  const navigate = useNavigate();
+
+  const { isLoading, isError, isSuccess, message, user } = useSelector(
+    (store) => store.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+    if (isSuccess && user) {
+      navigate('/entries');
+    }
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, dispatch, isLoading, navigate]);
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
+    let userData = !isLogin
+      ? {
+          email,
+          password,
+        }
+      : {
+          firstName,
+          lastName,
+          email,
+          password,
+        };
+    console.log(userData);
+    if (!isLogin) {
+      dispatch(login(userData));
+    } else {
+      dispatch(register(userData));
+    }
+    setEmail('');
+    setFirstName('');
+    setLastName('');
+    setPassword('');
+  };
+  const switchHandler = (e) => {
+    e.preventDefault();
+    setEmail('');
+    setFirstName('');
+    setLastName('');
+    setPassword('');
+    switchMode();
   };
   return (
     <>
       <div className="mx-auto w-[70%] border-1 border-black py-4 px-6 shadow-lg border rounded-sm">
-        <form
-          action=""
-          className="w-full flex flex-col items-center justify-center "
-        >
+        <form className="w-full flex flex-col items-center justify-center ">
           {isLogin && (
             <div className="block w-full mb-3">
               <label className="block mb-1" htmlFor="firstName">
@@ -83,14 +126,14 @@ const AuthForm = ({ switchMode, isLogin }) => {
             Submit
           </button>
           <p className="mt-5">Or</p>
-          <a
+          <button
             className="font-semibold mt-5 border-none active:border-none text-center px-2 hover:cursor-grab "
-            onClick={switchMode}
+            onClick={(e) => switchHandler(e)}
           >
             {isLogin
               ? 'Login with an  existing account'
               : 'Create a new account'}
-          </a>
+          </button>
         </form>
       </div>
     </>

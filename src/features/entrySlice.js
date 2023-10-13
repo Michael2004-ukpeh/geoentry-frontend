@@ -12,14 +12,12 @@ export const getEntries = createAsyncThunk(
   'entry/getEntries',
   async (_, thunkAPI) => {
     try {
-      return await entryService.getEntries(thunkAPI.getState().auth.user.token);
+      const token = thunkAPI.getState().auth.user.token;
+
+      const data = await entryService.getEntries(token);
+      return data;
     } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
+      const message = error.message || error.toString();
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -27,12 +25,10 @@ export const getEntries = createAsyncThunk(
 
 export const createEntry = createAsyncThunk(
   'entry/createEntry',
-  async (entryData, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      return await entryService.createEntry(
-        entryData,
-        thunkAPI.getState().auth.user.token
-      );
+      const token = thunkAPI.getState().auth.user.token;
+      return await entryService.createEntry(token);
     } catch (error) {
       const message =
         (error.response &&
@@ -67,11 +63,10 @@ export const getEntry = createAsyncThunk(
 
 export const updateEntry = createAsyncThunk(
   'entry/updateEntry',
-  async (id, updateData, thunkAPI) => {
+  async (id, thunkAPI) => {
     try {
       return await entryService.updateEntry(
         id,
-        updateData,
         thunkAPI.getState().auth.user.token
       );
     } catch (error) {
@@ -97,7 +92,8 @@ const entrySlice = createSlice({
         state.isLoading = true;
       })
       .addCase(createEntry.fulfilled, (state, { payload }) => {
-        state.entries.push(payload);
+        console.log(payload);
+        state.entries.push(payload.data);
         state.isSuccess = true;
         state.isLoading = false;
       })
@@ -110,11 +106,11 @@ const entrySlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getEntries.fulfilled, (state, { payload }) => {
-        state.entries = payload;
-        state.isSuccess = true;
         state.isLoading = false;
+        state.isSuccess = true;
+        state.entries = payload.data;
       })
-      .addCase(getEntries.rejected, (state, { payload }) => {
+      .addCase(getEntries.rejected, (state, { error, payload }) => {
         state.isLoading = false;
         state.isError = true;
         state.message = payload;
@@ -136,7 +132,7 @@ const entrySlice = createSlice({
       })
       .addCase(updateEntry.fulfilled, (state, { payload }) => {
         const entry = state.entries.find((a) => a.id === payload.id);
-        entry = payload.updateData;
+        entry = payload.data;
         state.isSuccess = true;
         state.isLoading = false;
       })

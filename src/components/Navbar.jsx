@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout, reset } from '../features/authSlice';
+
 const Navbar = () => {
+  // Setup conditional rendering on navbar item
   const [logout, setLogout] = useState(false);
+  const { user } = useSelector((store) => store.auth);
   return (
     <>
       <header className="flex justify-between items-center container  py-5 px-10 border-b border-black">

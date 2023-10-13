@@ -9,7 +9,6 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   useEffect(() => {
-    console.log(pathname);
     if (pathname === '/auth') {
       setShowNav(false);
     } else {

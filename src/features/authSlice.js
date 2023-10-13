@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authService from './authService';
 
-const user = localStorage.getItem('user');
+const user = JSON.parse(localStorage.getItem('user'));
 export const initialState = {
   user: user ? user : null,
   isError: false,
@@ -39,6 +39,7 @@ export const login = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      console.log(error);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -63,7 +64,12 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    reset: (state) => initialState,
+    reset: (state) => {
+      state.isLoading = false;
+      state.isSuccess = false;
+      state.isError = false;
+      state.message = '';
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -78,7 +84,7 @@ const authSlice = createSlice({
       .addCase(register.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = payload;
+        state.message = payload.message;
         state.user = null;
       })
       .addCase(login.pending, (state, { payload }) => {
@@ -92,7 +98,7 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = payload;
+        state.message = payload.message;
         state.user = null;
       })
       .addCase(logout.fulfilled, (state) => {
