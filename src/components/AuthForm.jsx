@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { register, login, reset } from '../features/authSlice';
-import { toast } from 'react-toastify';
+
 import { useNavigate } from 'react-router-dom';
+import { FaSpinner } from 'react-icons/fa';
 
 const AuthForm = ({ switchMode, isLogin }) => {
   const [email, setEmail] = useState('');
@@ -10,21 +11,10 @@ const AuthForm = ({ switchMode, isLogin }) => {
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const { isLoading, isError, isSuccess, message, user } = useSelector(
     (store) => store.auth
   );
-
-  useEffect(() => {
-    if (isError) {
-      toast.error(message);
-    }
-    if (isSuccess && user) {
-      navigate('/entries');
-    }
-    dispatch(reset());
-  }, [user, isError, isSuccess, message, dispatch, isLoading, navigate]);
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
@@ -39,7 +29,7 @@ const AuthForm = ({ switchMode, isLogin }) => {
           email,
           password,
         };
-    console.log(userData);
+
     if (!isLogin) {
       dispatch(login(userData));
     } else {
@@ -58,6 +48,9 @@ const AuthForm = ({ switchMode, isLogin }) => {
     setPassword('');
     switchMode();
   };
+  if (isLoading) {
+    return <FaSpinner />;
+  }
   return (
     <>
       <div className="mx-auto w-[70%] border-1 border-black py-4 px-6 shadow-lg border rounded-sm">

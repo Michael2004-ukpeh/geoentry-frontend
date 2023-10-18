@@ -23,31 +23,36 @@ const Entries = () => {
   // Setup add entry based on entry state
   const addEntry = (e) => {
     e.preventDefault();
-    console.log('add');
+
     dispatch(createEntry());
   };
 
-  useEffect(() => {
-    return () => {
-      dispatch(reset());
-    };
-  }, [dispatch]);
+  // useEffect(() => {
+  //   return () => {
+  //     dispatch(reset());
+  //   };
+  // }, [dispatch]);
 
   useEffect(() => {
     if (isError) {
       toast.error(message);
     }
 
-    if (!user.success) {
-      navigate('/auth');
-    }
+    // if (!user) {
+    //   navigate('/auth');
+    //
     dispatch(getEntries());
-    // return () => {
-    //   dispatch(reset());
-    // };
-  }, [user, navigate, dispatch, message, isError]);
+    return () => {
+      dispatch(reset());
+    };
+  }, [isError, dispatch]);
+
   if (isLoading) {
-    return <FaSpinner />;
+    return (
+      <div className="mx-auto flex justify-center items-center w-full py-11">
+        <FaSpinner />
+      </div>
+    );
   }
   return (
     <div className="mx-auto  py-5 w-4/5 flex flex-col justify-center overscroll-none">
@@ -71,7 +76,7 @@ const Entries = () => {
       {entries.length > 0 ? (
         <div className="entries grid grid-cols-3 gap-2 mt-5">
           {entries.map((entry) => {
-            return <Entry key={entry.id} entry={entry} />;
+            return <Entry key={entry._id} entry={entry} />;
           })}
         </div>
       ) : (

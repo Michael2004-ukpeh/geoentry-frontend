@@ -90,15 +90,16 @@ const entrySlice = createSlice({
     builder
       .addCase(createEntry.pending, (state) => {
         state.isLoading = true;
+        state.isError = false;
       })
       .addCase(createEntry.fulfilled, (state, { payload }) => {
-        console.log(payload);
         state.entries.push(payload.data);
         state.isSuccess = true;
         state.isLoading = false;
       })
       .addCase(createEntry.rejected, (state, { payload }) => {
         state.isLoading = false;
+        state.isSuccess = false;
         state.isError = true;
         state.message = payload;
       })
@@ -131,7 +132,7 @@ const entrySlice = createSlice({
         state.isLoading = true;
       })
       .addCase(updateEntry.fulfilled, (state, { payload }) => {
-        const entry = state.entries.find((a) => a.id === payload.id);
+        const entry = state.entries.find((a) => a._id === payload._id);
         entry = payload.data;
         state.isSuccess = true;
         state.isLoading = false;

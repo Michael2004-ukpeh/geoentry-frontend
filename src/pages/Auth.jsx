@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AuthForm from '../components/AuthForm';
 import { FaChevronRight } from 'react-icons/fa';
 import '../App.css';
 import { useNavigate } from 'react-router-dom';
+import { reset } from '../features/authSlice';
+import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 const Auth = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(false);
+  const { isLoading, isError, isSuccess, message, user } = useSelector(
+    (store) => store.auth
+  );
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+    if (isSuccess && user) {
+      navigate('/entries');
+    }
+  }, [user, isError, isSuccess, isLoading]);
 
   const switchMode = () => {
     setIsLogin(!isLogin);

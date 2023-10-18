@@ -9,6 +9,7 @@ const getEntries = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   };
+
   const { data } = await axios.get(API_URL, config);
 
   return data;
